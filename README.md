@@ -25,7 +25,7 @@ Users include:
 
 | Attribute    | Type             | Description           |
 |-----------------|------------------|-------------------         |
-| _id                 | String           | The user’s unique identifier,set automatically by mongoDB |
+| _id                 | String           | The user’s unique identifier, set automatically by mongoDB |
 | username          | String           | The user’s chosen username     |
 | email  | String           | The user's email |
 | password | String | The user's chosen password encrypted|
@@ -36,7 +36,7 @@ Rooms include:
 
 | Attribute | Type | Description |
 |-----------------|------------------|-------------------|
-| _id                  | String | The question’s unique identifier |
+| _id                  | String | The room's unique identifier, set automatically by mongoDB |
 | roomname        | String | The name of the created room |
 | password | String | The password needed to enter the room and chat|
 | users | Array[String] | A list of all the users's usernames that are currently in this room|
