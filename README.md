@@ -1,9 +1,8 @@
 # EasyChats Project
 
-This is the code for my EasyChats project. it is a real-time chat app that uses websockets.
-Frontend: React
-Backend: Express
-Database: MongoDB
+This is the code for my EasyChats project. it is a real-time chat app that uses websockets.  
+
+This project was made with **MongoDB**, **Express**, **Node** and **React**.   
 
 ## Data
 There are two types of objects stored in our database:
@@ -13,7 +12,7 @@ There are two types of objects stored in our database:
 
 ## Install Project Dependencies
 
-To install all dependencies, move into the server folder and the client folder and simply run npm install in each
+To install all dependencies, move into the server folder and the client folder and simply run `npm install` in each
 
 ## Start the Project
 
