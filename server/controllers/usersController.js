@@ -35,11 +35,12 @@ module.exports.register = async (req,res,next) =>{
 module.exports.login = async (req,res,next) =>{
     try{
         const {email,username, password, usernameOrEmail} = req.body;
+        let user=null
         if (usernameOrEmail) {
             if (username == "" || password==""){
                 return res.json({msg: "Username and password are required!", status: false});
             }
-            const user = await User.findOne({username});
+            user = await User.findOne({username});
 
             if (!user){
                 return res.json({msg: "This user does not exist!", status: false});
@@ -48,7 +49,7 @@ module.exports.login = async (req,res,next) =>{
             if (email == "" || password==""){
                 return res.json({msg: "Email and password are required!", status: false});
             }
-            const user = await User.findOne({email});
+            user = await User.findOne({email});
             if (!user){
                 return res.json({msg: "There is no account associated with this email!", status: false});
             }

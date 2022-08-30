@@ -1,8 +1,10 @@
-const {makeRoom, getRooms, getRoomUsers} = require('../controllers/roomsController')
+const {makeRoom, getRooms, getRoomUsers,joinRoom, leaveRoom} = require('../controllers/roomsController')
 
 const router = require("express").Router();
 
 router.post("/makeroom",makeRoom)
 router.get("/getrooms",getRooms)
-router.get("/getroomusers",getRoomUsers)
+router.post("/getroomusers",getRoomUsers)
+router.post("/joinroom",joinRoom)
+router.post("/leaveroom",leaveRoom)
 module.exports = router

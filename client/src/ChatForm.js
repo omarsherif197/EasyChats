@@ -9,7 +9,8 @@ function ChatForm(props) {
   const inputReference = useRef(null);
   const handleSubmit = (event) => {
     event.preventDefault()
-    socket.emit('chatMessage', input)
+    console.log(props.username,props.roomname)
+    socket.emit('chatMessage', {msg:input, roomname: props.roomname, username:props.username})
     setInput("")
     inputReference.current.focus();
   }

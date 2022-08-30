@@ -1,5 +1,5 @@
 import React, { useEffect ,useState} from 'react'
-import {getRoomsRoute,makeRoomRoute} from "./utils/APIRoutes"
+import {getRoomsRoute,joinRoomRoute} from "./utils/APIRoutes"
 import {useNavigate,Link} from 'react-router-dom'
 import axios from 'axios';
 
@@ -8,12 +8,26 @@ function Rooms(){
     const navigate = useNavigate()
     const [currentRoom,setCurrentRoom] = useState("")
     const [password,setPassword] = useState("")
+    const [currentUser,setCurrentUser] = useState("")
+    const [serverError,setServerError] = useState("")
 
     useEffect(()=>{
 
+
         if (!localStorage.getItem('chat-app-user')){
             navigate('/Login');
+        } else {
+            setCurrentUser(JSON.parse(localStorage.getItem('chat-app-user')).username)
         }
+
+        if (localStorage.getItem('chat-app-current-room')){
+            const data = JSON.parse(localStorage.getItem('chat-app-current-room'))
+            navigate(`/Chat/${data.currentRoom}`)
+        }
+
+
+
+        
 
         const fetchRooms = async () => {
             const {data} = await axios.get(getRoomsRoute)
@@ -28,8 +42,20 @@ function Rooms(){
 
     },[])
 
-    const handleClick = () =>{
-        const {data} = await axios.post()
+    const handleClick = async () =>{
+        const {data} = await axios.post(joinRoomRoute,{
+            username: currentUser,
+            roomname: currentRoom,
+            password
+        })
+
+        if (data.status==false){
+            setServerError(data.msg)
+        }
+        if (data.status == true){
+            localStorage.setItem('chat-app-current-room',JSON.stringify({currentRoom}));
+            navigate(`/Chat/${currentRoom}`)
+        }
     }
 
 
@@ -41,20 +67,25 @@ function Rooms(){
                 <button className="room" value={room.roomname} onClick={(e)=> setCurrentRoom(e.target.value)}>{room.roomname}</button>
             ))}
 
-                <input
-                    type="password"
-                    name="password"
-                    id="password"
-                    placeholder="Enter password..."
-                    required
-                    value={password}
-                    onChange= {(e) => setPassword(e.target.value)}
-                />
-			
-
-            <button className="btn" onClick={handleClick} > Login</button>
+            {rooms.length > 0 && 
+                            <input
+                type="password"
+                name="password"
+                id="password"
+                placeholder="Enter password..."
+                required
+                value={password}
+                onChange= {(e) => setPassword(e.target.value)}
+            />        
+                
+            }
+                
+            <button className="btn" onClick={handleClick} disabled = {rooms.length == 0} > Join room</button>
             <Link className="btn" to="/MakeRoom">Make a room</Link>
-
+            {
+                        serverError.length>0 &&
+                         <div className='error-message-server' > {serverError} </div>
+                    }
             </main>
             
         </div>

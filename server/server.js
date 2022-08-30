@@ -5,7 +5,6 @@ const cors=require('cors')
 const mongoose=require('mongoose')
 const socketio = require('socket.io');
 const formatMessage = require('./utils/messages');
-const {userJoin, getCurrentUser, userLeave,getRoomUsers,queuemsg, emptyqueue } = require('./utils/users')
 const userRoutes = require("./routes/userRoutes")
 const roomRoutes = require("./routes/roomRoutes")
 
@@ -37,41 +36,36 @@ io.on('connection', socket =>{
 
     socket.on('joinRoom', ({username, roomname})=>{
 
-        const user = userJoin(socket.id, username,roomname)
-        socket.join(user.room)
-    
+        socket.join(roomname)
+        console.log(username)
 
-        socket.data.username = user.username
+        socket.data.username = username
         //Welcome current user
 
         //Broadcast when a user connects
-        socket.broadcast.to(user.room).emit('message', formatMessage(chatmaster,`${user.username} has joined the chat`))
+        socket.broadcast.to(roomname).emit('message', formatMessage(chatmaster,`${username} has joined the chat`))
 
-        io.to(user.room).emit('roomUsers',{
-            room: user.room,
-            users: getRoomUsers(user.room),
-        })
+        io.to(roomname).emit('roomUsers')
 
     })    
 
     //Listen for chat message
-    socket.on('chatMessage', async (msg)=>{
-        const user = getCurrentUser(socket.id);
-        io.to(user.room).emit('message', formatMessage(user.username,msg))       
+    socket.on('chatMessage', async ({msg,username,roomname})=>{
+        io.to(roomname).emit('message', formatMessage(username,msg))       
     })
 
     //Runs wehn client disconnects
-    socket.on('disconnect', async ()=>{
-        const user = userLeave(socket.id)
-        if (user){
-            io.to(user.room).emit('message', formatMessage(chatmaster,`${user.username} has left the chat`))
-            io.to(user.room).emit('roomUsers',{
-                room: user.room,
-                users: getRoomUsers(user.room),
-            })
-        }
+    // socket.on('disconnect', async ()=>{
+    //     const user = userLeave(socket.id) //tochange
+    //     if (user){
+    //         io.to(user.room).emit('message', formatMessage(chatmaster,`${user.username} has left the chat`))
+    //         io.to(user.room).emit('roomUsers',{
+    //             room: user.room,
+    //             users: getRoomUsers(user.room),
+    //         })
+    //     }
 
-    })
+    // })
 })
 
 app.get("/api", (req, res) => {

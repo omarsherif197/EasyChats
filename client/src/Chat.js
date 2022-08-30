@@ -3,58 +3,89 @@ import React, { useEffect, useState } from "react";
 import UserList from './UserList';
 import ChatBox from './ChatBox';
 import ChatForm from './ChatForm';
-import { useSearchParams,useNavigate } from "react-router-dom";
+import { useParams,useNavigate } from "react-router-dom";
 import io from 'socket.io-client'
+import axios from 'axios'
+import {leaveRoomRoute} from "./utils/APIRoutes"
 
 
 function Chat() {
-    let [searchParams, setSearchParams] = useSearchParams();
     const [socket, setSocket] = useState(null);
     const navigate = useNavigate()
+    const [wrongRoom,setWrongRoom] = useState(false)
+    const [params,setParams] = useState(useParams())
 
     useEffect(()=>{
-      const newSocket = io()
-      setSocket(newSocket)
-      if (searchParams.get('username')==null){
-        navigate('/')
-      }
-
       
-      /*
-      ideas: 
-      1. create a new event that's not joinroom where user is just refreshing page and is assigned a new socket
-      use that event based on loggedIn state
-      2. 
-      */
-      newSocket.emit('joinRoom', {username: searchParams.get('username'), roomname: searchParams.get('roomname')})
-     
-      return  ()=> newSocket.disconnect()
+      if (!localStorage.getItem('chat-app-user')){
+        navigate('/Login');
+      } else if (!localStorage.getItem('chat-app-current-room')){
+        navigate('/Rooms');
+    } else {
+      let res = {
+        ...params
+      }
+      const user = JSON.parse(localStorage.getItem('chat-app-user'))
+      res.username = user.username
+      setParams(res)
+      const data = JSON.parse(localStorage.getItem('chat-app-current-room'))
+      if (data.currentRoom!= params.roomName){
+        setWrongRoom(true)
+  
+      } else {
+  
+        const newSocket = io()
+        setSocket(newSocket)
+        newSocket.emit('joinRoom', {username: user.username, roomname: params.roomName})
+  
+        return  ()=> newSocket.disconnect()
+      }     
+
+    }
+
+    
      
     },[])
 
-    const handleClick = () => {
-      navigate('/',{replace:true})
+    const handleClick = async () => {
+
+      localStorage.removeItem("chat-app-current-room")
+      const {data} = await axios.post(leaveRoomRoute,{
+        username: params.username,
+        roomname: params.roomName
+      })
+
+      navigate('/')
+
     }
     
-    return(
-      <div>
-        {socket ? 
-          <div className="chat-container">
-            <header className="chat-header">
-              <h1><i className="fas fa-smile"></i> EasyChats</h1>
-              <button onClick={handleClick} className="btn">Leave Room</button>
-            </header>
-            <main className="chat-main">
-              <UserList username={searchParams.get('username')} roomname={searchParams.get('roomname')} socket={socket}/>
-              <ChatBox socket={socket}/>
-            </main>
-            <ChatForm socket={socket}/>
-          </div>     
-        :
-        <div>Not connected</div>
-        }
-        </div>
-    )
+    if (wrongRoom){
+      return (
+        <h1> This is not your room, you're room is {params.roomName}</h1>
+      )
+    } else {
+      return(
+        <div>
+          
+          {socket ? 
+            <div className="chat-container">
+              <header className="chat-header">
+                <h1><i className="fas fa-smile"></i> EasyChats</h1>
+                <button onClick={handleClick} className="btn">Leave Room</button>
+              </header>
+              <main className="chat-main">
+                <UserList username={params.username} roomname={params.roomName} socket={socket}/>
+                <ChatBox socket={socket}/>
+              </main>
+              <ChatForm socket={socket} username={params.username} roomname={params.roomName}/>
+            </div>     
+          :
+          <div>Not connected</div>
+          }
+          </div>
+      )
+    }
+    
 }
 
 export default Chat;
