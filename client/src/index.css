@@ -293,6 +293,23 @@ a {
 	
 }
 
+.room-main .logout{
+	outline: none;
+	border: 0;	
+	border-color: var(--light-color);;
+	padding: 5px;
+	height: 30px;
+	border-radius: 5px;
+	align-self:flex-end;
+	font-size: large;
+	text-align: center;
+	width:20%;
+	color: var(--dark-color-a);
+	background: var(--light-color);
+	
+	cursor: pointer;
+}
+
 .room-main input{
 	width:65%;
 	padding: 7px;

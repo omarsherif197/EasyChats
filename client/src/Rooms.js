@@ -58,13 +58,19 @@ function Rooms(){
         }
     }
 
+    const handleLogout = async () =>{
+        localStorage.removeItem('chat-app-user')
+        navigate('/')
+    }
+
 
     return(
         <div className="room-container">
             <main className="room-main">
+            <button className='logout' onClick={handleLogout}>Logout</button> 
             <h1>Click room name to join</h1>
             {rooms.map((room)=>(
-                <button className="room" value={room.roomname} onClick={(e)=> setCurrentRoom(e.target.value)}>{room.roomname}</button>
+                <button className="room" key ={room.roomname} value={room.roomname} onClick={(e)=> setCurrentRoom(e.target.value)}>{room.roomname}</button>
             ))}
 
             {rooms.length > 0 && 
