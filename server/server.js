@@ -55,17 +55,10 @@ io.on('connection', socket =>{
     })
 
     //Runs wehn client disconnects
-    // socket.on('disconnect', async ()=>{
-    //     const user = userLeave(socket.id) //tochange
-    //     if (user){
-    //         io.to(user.room).emit('message', formatMessage(chatmaster,`${user.username} has left the chat`))
-    //         io.to(user.room).emit('roomUsers',{
-    //             room: user.room,
-    //             users: getRoomUsers(user.room),
-    //         })
-    //     }
-
-    // })
+    socket.on('userLeave', async ({username, roomname})=>{
+        socket.broadcast.to(roomname).emit('message', formatMessage(chatmaster,`${username} has left the chat`))
+        io.to(roomname).emit('roomUsers')
+    })
 })
 
 app.get("/api", (req, res) => {

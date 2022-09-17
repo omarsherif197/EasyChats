@@ -127,7 +127,7 @@ function LoginBox() {
                          <div className='error-message-server' > {serverError} </div>
                     }
 
-					<button type="submit" className="btn" disabled={emailError}>Join Chat</button>
+					<button type="submit" className="btn" disabled={emailError}>Sign in</button>
                     <span>Don't have an account? <Link to="/Register">Sign up</Link></span>
 				</form>
                 </main>

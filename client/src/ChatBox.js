@@ -28,7 +28,7 @@ function ChatBox(props) {
     return(
         <div className="chat-messages">
             {messages.map(message => (
-                <div className="message">
+                <div className="message" key={message.username+message.time}>
                     <p className="meta">{message.username} <span>{message.time}</span></p>
                     <p className="text">{message.text}</p>
                 </div>

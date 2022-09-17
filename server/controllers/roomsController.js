@@ -60,8 +60,10 @@ module.exports.joinRoom = async (req,res,next) =>{
     try{
         const {roomname,password, username} = req.body
     const room = await Room.findOne({roomname})
-
-    const isPasswordValid = bcrypt.compare(password, room.password);
+    
+    
+    const isPasswordValid = await bcrypt.compare(password, room.password);
+    console.log(isPasswordValid)
     if (!isPasswordValid){
         return res.json({msg: "Incorrect room password!", status: false});
     }

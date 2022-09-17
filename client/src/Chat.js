@@ -36,6 +36,7 @@ function Chat() {
   
         const newSocket = io()
         setSocket(newSocket)
+        
         newSocket.emit('joinRoom', {username: user.username, roomname: params.roomName})
   
         return  ()=> newSocket.disconnect()
@@ -54,7 +55,7 @@ function Chat() {
         username: params.username,
         roomname: params.roomName
       })
-
+      socket.emit('userLeave',{username: params.username, roomname: params.roomName})
       navigate('/')
 
     }
